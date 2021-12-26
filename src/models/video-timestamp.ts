@@ -1,4 +1,4 @@
 export class VideoTimestamp {
-    public startTime: number;
-    public endTime: number; 
+    public startTime: string;
+    public endTime: string; 
 }
