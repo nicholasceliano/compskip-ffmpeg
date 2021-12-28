@@ -21,9 +21,13 @@
     "homepage": "https://github.com/nicholasceliano/compskip-ffmpeg#readme",
     "devDependencies": {
         "@types/node": "^17.0.0",
+        "@types/uuid": "^8.3.3",
         "@typescript-eslint/eslint-plugin": "^5.7.0",
         "@typescript-eslint/parser": "^5.7.0",
         "eslint": "^8.5.0",
         "typescript": "^4.5.4"
+    },
+    "dependencies": {
+        "uuid": "^8.3.2"
     }
 }

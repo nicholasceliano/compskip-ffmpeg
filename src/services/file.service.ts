@@ -1,4 +1,5 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync } from 'fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from 'fs';
+import { parse } from 'path/posix';
 import { FileDeliminator } from '../constants';
 
 export class FileService {
@@ -33,6 +34,16 @@ export class FileService {
         }
 
         return parsedData;
+    }
+
+    prefixFileName(file: string, prefix: string) {
+        const newFileName = `${parse(file).dir}/${prefix} - ${parse(file).base}`;
+        renameSync(file, newFileName);
+    }
+
+    copyFile(sourceFile: string, destPath: string) {
+        const destFile = `${destPath}/${parse(sourceFile).base}`;
+        copyFileSync(sourceFile, destFile);
     }
 
     private getFileExt(f: string) {

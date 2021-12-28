@@ -8,7 +8,7 @@ export enum Config {
     ComskipIniFile = 'comskip-logo-bot-right',
     MinimumCommercialCt = '',
 
-
-    FileOutputLocation = '',
+    FailedFileOutputLocation = '',
+    SuccessFileOutputLocation = '',
     OutputVideoFormat = 'mp4'
 }

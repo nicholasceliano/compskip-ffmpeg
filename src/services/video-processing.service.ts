@@ -1,3 +1,4 @@
+import path from 'path';
 import { Config } from '../config';
 import { ComskipService } from './comskip.service';
 import { FfmpegService } from './ffmpeg.service';
@@ -17,21 +18,26 @@ export class VideoProcessingService {
     start() {
         const filesToProcess = this.fileService.getFiles(Config.InputFileFolderLocation, Config.InputVideoFileFormat, true);
         
-        const x = filesToProcess[0];
-        // filesToProcess.forEach(x => { // <-- i might be able to fire off multiple threads of this
+        filesToProcess.forEach(x => {
             try {
-                const timestamps = this.comskip.generateVideoTimestamps(filesToProcess[0]);
-                this.ffmpeg.removeTimeStampsFromVideo(x, timestamps);
-                // do ffmpeg video processing
-                    // loop though the timestamps and run ffmpeg to cut up video
-                    // put cut up sections in temp folder
-                        // put togeater the cut up sections and save it under the original file name to a destination output folder
-                // move file to completed location
+
+                // TODO: Implement video prefix slice on first timestamp
+
+                const timestamps = this.comskip.generateVideoTimestamps(x);
+                const videoCutList = this.ffmpeg.removeTimeStampsFromVideo(x, timestamps);
+                this.ffmpeg.concatVideoCutList(x, videoCutList);
+
+                this.fileService.prefixFileName(x, 'Converted');
+
+                this.fileService.clearDir(Config.TempDir);
             } catch(err) {
-                // move file to error location or log failure
-                    // and flag the original file as failed? - maybe not
+                const failedOutputPath = path.resolve(Config.FailedFileOutputLocation);
+                this.fileService.copyFile(x, failedOutputPath);
+                this.fileService.prefixFileName(x, 'Failed');
+
                 console.log(err);
+                console.log('error');
             }
-        // });
+        });
     }
 }

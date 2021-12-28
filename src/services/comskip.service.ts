@@ -29,9 +29,13 @@ export class ComskipService {
             console.log('comskip started');
             this.fileService.clearDir(Config.TempDir);
             execSync(this.buildComskipCmd(file));
-            console.log('comskip complete');    
+            console.log('comskip complete - no commercials');
         } catch(err: any) {
-            throw(`comskip error: ${err.toString()}`);
+            if (err.status === 1) {
+                console.log('comskip complete - commercials found');
+            } else if (err.status > 1) {
+                throw(`comskip error: ${err.toString()}`);
+            }
         }
     }
 
