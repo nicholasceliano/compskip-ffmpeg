@@ -1,9 +1,9 @@
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from 'fs';
 import { parse } from 'path/posix';
+import { Config } from '../config';
 import { FileDeliminator } from '../constants';
 
 export class FileService {
-
     getFiles(folderLocation: string, fileType: string, includePath = false) {
         const returnFiles: string[] = [];
         const readFiles = readdirSync(folderLocation) || [];
@@ -36,14 +36,16 @@ export class FileService {
         return parsedData;
     }
 
-    prefixFileName(file: string, prefix: string) {
-        const newFileName = `${parse(file).dir}/${prefix} - ${parse(file).base}`;
-        renameSync(file, newFileName);
+    archiveFile(file: string) {
+        const archiveFile = `${Config.ArchiveFileOutputLocation}/${parse(file).base}`
+        renameSync(file, archiveFile);
+        console.log(`process successful - ${archiveFile}`);
     }
 
-    copyFile(sourceFile: string, destPath: string) {
-        const destFile = `${destPath}/${parse(sourceFile).base}`;
-        copyFileSync(sourceFile, destFile);
+    archiveFailedFile(file: string) {
+        const archiveFailedFile = `${Config.FailedFileOutputLocation}/${parse(file).base}`
+        renameSync(file, archiveFailedFile);
+        console.log(`process failed - ${archiveFailedFile}`);
     }
 
     private getFileExt(f: string) {

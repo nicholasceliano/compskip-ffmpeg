@@ -2,9 +2,9 @@ import { VideoProcessingService } from './services/video-processing.service';
 
 class Index {
     static init() {
-        console.log('init');
+        console.log('process started');
         new VideoProcessingService().start();
-        console.log('done');
+        console.log('process ended');
     }
 }
 

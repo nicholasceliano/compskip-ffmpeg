@@ -21,12 +21,16 @@ export class ComskipService {
         this.executeComskipCmd(file);
         videoTimestamps = this.parseComskipOutput();
 
+        if (videoTimestamps.length < Config.MinimumCommercialCt) {
+            throw(`Commerical Count of ${videoTimestamps.length} does not met minimum config of ${Config.MinimumCommercialCt}`);
+        }
+
         return videoTimestamps;
     }
 
     private executeComskipCmd(file: string) {
         try {
-            console.log('comskip started');
+            console.log('\ncomskip started');
             this.fileService.clearDir(Config.TempDir);
             execSync(this.buildComskipCmd(file));
             console.log('comskip complete - no commercials');
@@ -56,9 +60,10 @@ export class ComskipService {
     private parseComskipOutput() {
         const timestamps: VideoTimestamp[] = [];
         const data = this.fileService.parseFile(`${Config.TempDir}/comskip_out.edl`, FileDeliminator.Tab);
+        const startTrimSeconds = Config.StartTrimSeconds;
 
         data.forEach((x, i) => { 
-            const startTime = i === 0 ? 0 : parseFloat(data[i - 1][1]);
+            const startTime = i === 0 ? startTrimSeconds : parseFloat(data[i - 1][1]);
             const endTime = parseFloat(i === 0 ? x[0] : data[i][0]);
             
             timestamps.push({

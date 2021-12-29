@@ -25,7 +25,7 @@ export class FfmpegService {
 
             console.log(`start cut ${i}`);
             execSync(this.buildVideoCutCmd(videoLocation, x.startTime, x.endTime, outputFile));
-            console.log(`end cut ${i} - ${outputFile}`);
+            console.log(`end   cut ${i} - ${outputFile}`);
         });
 
         return videoCutList;
@@ -41,15 +41,16 @@ export class FfmpegService {
 
         console.log(`start concat - ${videoCutList.length} slices`);
         execSync(this.buildVideoConcatCmd(videoCutListTxt, outputFile));
-        console.log(`end concat - ${outputFile}`);
+        console.log(`end   concat - ${outputFile}`);
     }
 
     private buildVideoCutCmd(inputFile: string, startTimeStamp: string, endTimeStamp: string, outputFile: string) {
-        return `ffmpeg -i "${inputFile}" -ss ${startTimeStamp}${endTimeStamp ? ` -to ${endTimeStamp}` : ''} -c copy "${outputFile}" -loglevel error`;
+        return `ffmpeg -i "${inputFile}" -ss ${startTimeStamp}${endTimeStamp ? ` -to ${endTimeStamp}` : ''} -c copy "${outputFile}" -loglevel panic`;
     }
 
     private buildVideoConcatCmd(videoCutListTxt: string, outputFile: string) {
-        return `ffmpeg -f concat -safe 0 -i ${videoCutListTxt} -c copy "${outputFile}" -loglevel error`;
+        const outputEncoding = Config.EncodeVideoOutput ? '-vcodec libx264 -crf 20' : '-c copy';
+        return `ffmpeg -f concat -safe 0 -i ${videoCutListTxt} ${outputEncoding} "${outputFile}" -loglevel error`;
     }
 
     private writeVideoCutListToFile(videoCutList: string[], fileLocation: string) {
